@@ -1,6 +1,14 @@
 Illegal import checker
 ===============================
 
+.. image:: https://travis-ci.com/bagerard/flake8-illegal-import.svg?branch=master
+   :alt: Build Status
+   :target: https://travis-ci.com/bagerard/flake8-illegal-import
+
+.. image:: http://codecov.io/github/bagerard/flake8-illegal-import/coverage.svg?branch=master
+   :alt: Coverage Status
+   :target: http://codecov.io/github/bagerard/flake8-illegal-import?branch=master
+
 An extension for `Flake8 <https://pypi.python.org/pypi/flake8>`_ to make sure
 that certain packages aren't imported in a directory
 
