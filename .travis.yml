@@ -6,4 +6,9 @@ python:
 
 script:
   - python setup.py test
+  - coverage run setup.py test
 
+before_install:
+  - pip install codecov
+after_success:
+  - codecov
