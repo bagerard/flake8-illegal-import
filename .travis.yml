@@ -3,13 +3,7 @@ python:
   - "2.7"
   - "3.6"
   - "3.7"
-  - "nightly"
 
 script:
   - python setup.py test
-  - coverage run setup.py test
 
-before_install:
-  - pip install codecov
-after_success:
-  - codecov
