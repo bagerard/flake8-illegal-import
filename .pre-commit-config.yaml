@@ -1,0 +1,27 @@
+# See http://pre-commit.com for more information
+# See http://pre-commit.com/hooks.html for more hooks
+
+fail_fast: false             # Dont stop running checks on first failure
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    sha: v1.2.3
+    hooks:
+    -   id: check-ast                           # Simply check whether files parse as valid python.
+    -   id: autopep8-wrapper
+        args: ['-i', '--select=E101,E111,E114,E20,E222,E225,E231,E241,E251,E261,E265,E27,E302,E303,E305']
+    -   id: flake8
+        name: flake8-blocking
+        args: ['--isolated', '--select=P,F401,F821,F901', '--ignore=P101,P102']
+        #args: ['--exit-zero']     # Only print, don't exit
+        additional_dependencies:
+            -   flake8-string-format
+    -   id: check-merge-conflict
+    -   id: debug-statements
+        name: pdb_debug-statements
+    -   id: trailing-whitespace
+        types: [python]
+    -   id: end-of-file-fixer
+        types: [python]
+    -   id: check-yaml
+    -   id: check-json
+    -   id: check-added-large-files

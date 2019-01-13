@@ -10,6 +10,7 @@ def get_version():
             if line.startswith('__version__'):
                 return eval(line.split('=')[-1])
 
+
 def get_prefix():
     with open('flake8_illegal_import.py') as f:
         for line in f:
@@ -37,11 +38,11 @@ setup(
     zip_safe=False,
     entry_points={
         'flake8.extension': [
-            '{prefix} = flake8_illegal_import:ImportChecker'.format(prefix= get_prefix()),
+            '{prefix} = flake8_illegal_import:ImportChecker'.format(prefix=get_prefix()),
         ],
     },
-    tests_require=['six'],
-    test_suite='test_flake8_illegal_import',
+    tests_require=['six', 'pytest'],
+    setup_requires=["pytest-runner"],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',

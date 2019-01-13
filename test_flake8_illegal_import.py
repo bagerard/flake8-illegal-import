@@ -30,7 +30,7 @@ class TestImportDetector(unittest.TestCase):
                     6: 'os',
                     7: 'os'}
 
-        self.assertEqual(errors, expected)
+        assert errors == expected
 
     def test_run(self):
         tree = get_tree(SAMPLE_FILE_PATH)
@@ -46,8 +46,4 @@ class TestImportDetector(unittest.TestCase):
             (7, 0, 'II101 importing this package is forbidden in this directory (os)', ImportChecker),
         ]
         res = list(checker.run())
-        self.assertEqual(res, expected)
-
-
-if __name__ == '__main__':
-    unittest.main()
+        assert res == expected

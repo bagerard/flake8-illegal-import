@@ -50,8 +50,10 @@ class Flake8Argparse(object):
 
     @classmethod
     def parse_options(cls, option_manager, options, extra_args):
+        # print('DEBUG: Parse options: {} {} {}'.format(option_manager, options, extra_args))
         cls.illegal_import_dir = resolve_path(options.illegal_import_dir)
-        cls.illegal_import_packages = [pkg for pkg in options.illegal_import_packages.split(',') if pkg]    # Allows for "package," as option
+        cls.illegal_import_packages = options.illegal_import_packages or ""
+        cls.illegal_import_packages = [pkg for pkg in cls.illegal_import_packages.split(',') if pkg]    # Allows for "package," as option
 
     @classmethod
     def add_arguments(cls, parser):
@@ -96,9 +98,15 @@ def create_parser(plugin_class, codes):
 
 
 def handle_plugin(plugin_class, parser, args):
+    if hasattr(plugin_class, 'add_options'):
+        plugin_class.add_options(parser)
+
     args = parser.parse_args(args)
+
     if hasattr(plugin_class, 'parse_options'):
-        plugin_class.parse_options(args)
+        plugin_class.parse_options(option_manager=None,
+                                   options=args,
+                                   extra_args=None)
     failed = False
     for filename in args.files:
         with open(filename, 'rb') as f:
