@@ -52,7 +52,6 @@ class Flake8Argparse(object):
     def parse_options(cls, option_manager, options, extra_args):
         cls.illegal_import_dir = resolve_path(options.illegal_import_dir)
         cls.illegal_import_packages = [pkg for pkg in options.illegal_import_packages.split(',') if pkg]    # Allows for "package," as option
-        cls.verbose = options.verbose
 
     @classmethod
     def add_arguments(cls, parser):
@@ -205,24 +204,3 @@ def main(args):
 
 if __name__ == '__main__':
     main(sys.argv[1:])
-
-
-# failed = False
-# for filename in ["./cpauth/cpauth/token.py", "./cpauth/cpauth/sso.py"]:
-#     with open(filename, 'rb') as f:
-#         tree = compile(f.read(), filename, 'exec', ast.PyCF_ONLY_AST, True)
-#     for line, char, msg, checker in ImportChecker(tree, filename).run():
-#         # if msg[:4] not in args.ignore:
-#         print('{0}:{1}:{2}: {3}'.format(filename, line, char + 1, msg))
-#         failed = True
-#
-# print("failed" if failed else "not failed")
-
-
-#
-# filename = "./cpauth/cpauth/token.py"
-# with open(filename, 'rb') as f:
-#     tree = compile(f.read(), filename, 'exec', ast.PyCF_ONLY_AST, True)
-# visitor = ImportVisitor([], [])
-# visitor.visit(tree)
-# print(visitor.imported_packages)
