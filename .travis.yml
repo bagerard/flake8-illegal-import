@@ -8,7 +8,7 @@ dist:
   - xenial
 
 install:
-  - pip install -e ./
+  - pip install .
 
 script:
   - python setup.py test

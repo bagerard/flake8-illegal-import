@@ -23,13 +23,15 @@ def get_long_description():
         return f.read()
 
 
+INSTALL_REQUIRES = ['flake8']
+TESTS_REQUIRES = ['pytest', 'mock', 'pytest-cov']
+
 setup(
     name='flake8-illegal-import',
     version=get_version(),
     description='illegal import detector, plugin for flake8',
     long_description=get_long_description(),
     keywords='flake8 import reject',
-    install_requires=['flake8'],
     maintainer='Bastien Gérard',
     maintainer_email='bastien.gerard@gmail.com',
     url='https://github.com/bagerard/flake8-illegal-import',
@@ -41,8 +43,9 @@ setup(
             '{prefix} = flake8_illegal_import:ImportChecker'.format(prefix=get_prefix()),
         ],
     },
-    tests_require=['pytest', 'mock'],
-    setup_requires=["pytest-runner"],
+    install_requires=INSTALL_REQUIRES,
+    tests_require=TESTS_REQUIRES,
+    setup_requires=['pytest-runner'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
