@@ -6,13 +6,7 @@ from __future__ import print_function, unicode_literals
 import ast
 from collections import namedtuple
 
-import sys
 import os.path
-
-try:
-    import argparse
-except ImportError as e:
-    argparse = e
 
 __version__ = '0.1.0'
 
@@ -50,80 +44,9 @@ class Flake8Argparse(object):
 
     @classmethod
     def parse_options(cls, option_manager, options, extra_args):
-        # print('DEBUG: Parse options: {} {} {}'.format(option_manager, options, extra_args))
         cls.illegal_import_dir = resolve_path(options.illegal_import_dir)
-        cls.illegal_import_packages = options.illegal_import_packages or ""
-        cls.illegal_import_packages = [pkg for pkg in cls.illegal_import_packages.split(',') if pkg]    # Allows for "package," as option
-
-    @classmethod
-    def add_arguments(cls, parser):
-        pass
-
-
-def create_parser(plugin_class, codes):
-    def handler(value):
-        if value:
-            ignored = set(value.split(','))
-            unrecognized = ignored - codes
-            ignored &= codes
-            if unrecognized:
-                invalid = set()
-                for invalid_code in unrecognized:
-                    no_valid = True
-                    if not invalid:
-                        for valid_code in codes:
-                            if valid_code.startswith(invalid_code):
-                                ignored.add(valid_code)
-                                no_valid = False
-                    if no_valid:
-                        invalid.add(invalid_code)
-                if invalid:
-                    raise argparse.ArgumentTypeError(
-                        'The code(s) is/are invalid: "{0}"'.format(
-                            '", "'.join(invalid)))
-            return ignored
-        else:
-            return set()
-
-    if isinstance(argparse, ImportError):
-        print('argparse is required for the standalone version.')
-        return False
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--ignore', type=handler, default='',
-                        help='Ignore the given comma-separated codes')
-    parser.add_argument('files', nargs='+')
-    plugin_class.add_arguments(parser)
-    return parser
-
-
-def handle_plugin(plugin_class, parser, args):
-    if hasattr(plugin_class, 'add_options'):
-        plugin_class.add_options(parser)
-
-    args = parser.parse_args(args)
-
-    if hasattr(plugin_class, 'parse_options'):
-        plugin_class.parse_options(option_manager=None,
-                                   options=args,
-                                   extra_args=None)
-    failed = False
-    for filename in args.files:
-        with open(filename, 'rb') as f:
-            tree = compile(f.read(), filename, 'exec', ast.PyCF_ONLY_AST, True)
-        for line, char, msg, checker in plugin_class(tree, filename).run():
-            if msg[:4] not in args.ignore:
-                print('{0}:{1}:{2}: {3}'.format(filename, line, char + 1, msg))
-                failed = True
-    return not failed
-
-
-def execute(plugin_class, args, choices):
-    parser = create_parser(plugin_class, choices)
-    if parser is not False:
-        return handle_plugin(plugin_class, parser, args)
-    else:
-        return False
+        illegal_import_packages = options.illegal_import_packages or ""
+        cls.illegal_import_packages = [pkg for pkg in illegal_import_packages.split(',') if pkg]    # Allows for "package," as option
 
 
 def root_package_name(name):
@@ -185,16 +108,19 @@ class ImportChecker(Flake8Argparse):
             if package_name in banned_packages:
                 yield (node, package_name)
 
+    def report(self, msg):
+        print(msg)
+
     def run(self):
         dir_path = self.illegal_import_dir
         banned_packages = set(self.illegal_import_packages)
 
         if not banned_packages:
-            print('No illegal import package set - skip checks')
+            self.report('No illegal import package set - skip checks')
             return
 
         if not os.path.isdir(dir_path):
-            print('WARNING: Directory configured does not exist: {}'.format(dir_path))
+            self.report('WARNING: Directory configured does not exist: {}'.format(dir_path))
             return
 
         if not self.filename.startswith(dir_path):
@@ -203,12 +129,3 @@ class ImportChecker(Flake8Argparse):
 
         for node, pkg in ImportChecker.get_illegal_imports(self.tree, banned_packages):
             yield self._generate_error(node, 101, package=pkg)
-
-
-def main(args):
-    choices = set('{0}'.format(format_code(code)) for code in ImportChecker.ERRORS)
-    return execute(ImportChecker, args, choices)
-
-
-if __name__ == '__main__':
-    main(sys.argv[1:])

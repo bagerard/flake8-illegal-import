@@ -41,7 +41,7 @@ setup(
             '{prefix} = flake8_illegal_import:ImportChecker'.format(prefix=get_prefix()),
         ],
     },
-    tests_require=['six', 'pytest'],
+    tests_require=['pytest', 'mock'],
     setup_requires=["pytest-runner"],
     classifiers=[
         'Development Status :: 3 - Alpha',
