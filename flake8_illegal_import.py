@@ -5,7 +5,6 @@ from __future__ import print_function, unicode_literals
 
 import ast
 from collections import namedtuple
-
 import os.path
 
 __version__ = '0.1.0'
