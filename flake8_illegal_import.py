@@ -66,22 +66,21 @@ class ImportVisitor(ast.NodeVisitor):
         self.imported_packages = []
 
     def visit_Import(self, node):  # noqa: N802
-        if node.col_offset == 0:
-            modules = [alias.name for alias in node.names]
-            self.imported_packages.append(
-                ImportedPackage(root_package_name(modules[0]), node)
-            )
-
-    def visit_ImportFrom(self, node):  # noqa: N802
-        if node.col_offset == 0:
-            module = node.module or ''
-            if node.level > 0:
-                # ignore application relative
-                return
-
+        modules = [alias.name for alias in node.names]
+        for module in modules:
             self.imported_packages.append(
                 ImportedPackage(root_package_name(module), node)
             )
+
+    def visit_ImportFrom(self, node):  # noqa: N802
+        module = node.module or ''
+        if node.level > 0:
+            # ignore application relative
+            return
+
+        self.imported_packages.append(
+            ImportedPackage(root_package_name(module), node)
+        )
 
 
 class ImportChecker(Flake8Argparse):
